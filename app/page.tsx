@@ -1,23 +1,36 @@
-import { LoginButton } from '@/components/login-button'
-import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
+'use client'
 
-export default async function Home() {
+import { LoginButton } from '@/components/login-button'
+import { useRouter } from 'next/navigation'
+import { useAuth } from '@/context/AuthContext'
+import { useEffect } from 'react'
+
+export default function Home() {
+  const { user, loading } = useAuth()
+  const router = useRouter()
+  
   const hasEnvVars = process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   
-  if (hasEnvVars) {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    
-    // Automatically redirect authenticated users
-    if (user) {
-      redirect('/dashboard')
+  useEffect(() => {
+    if (user && !loading) {
+      router.push('/dashboard')
     }
+  }, [user, loading, router])
+
+  if (loading) {
+    return (
+      <main className="flex min-h-screen flex-col items-center justify-center bg-white">
+        <div className="w-8 h-8 rounded-full border-2 border-indigo-600 border-t-transparent animate-spin" />
+      </main>
+    )
+  }
+
+  if (user) {
+    return null; // Will redirect
   }
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-6 lg:p-24 bg-white relative overflow-hidden">
-      {/* Decorative background blurs */}
       <div className="absolute top-0 -translate-y-12 isolate opacity-40 mix-blend-multiply blur-3xl w-[800px] h-[400px] bg-blue-100/40 rounded-full left-1/2 -translate-x-1/2" />
       
       <div className="z-10 mx-auto flex w-full max-w-[400px] flex-col justify-center space-y-8">

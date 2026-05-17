@@ -1,21 +1,27 @@
-import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
+'use client'
+
+import { useRouter } from 'next/navigation'
 import { LogoutButton } from '@/components/logout-button'
 import Image from 'next/image'
+import { useAuth } from '@/context/AuthContext'
+import { useEffect } from 'react'
 
-export default async function DashboardPage() {
-  let supabase
-  try {
-    supabase = await createClient()
-  } catch (error) {
-    // Missing environment variables
-    redirect('/')
-  }
+export default function DashboardPage() {
+  const { user, loading } = useAuth()
+  const router = useRouter()
 
-  const { data: { user }, error } = await supabase.auth.getUser()
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/')
+    }
+  }, [loading, user, router])
 
-  if (error || !user) {
-    redirect('/')
+  if (loading || !user) {
+    return (
+      <div className="min-h-screen bg-zinc-50 flex items-center justify-center">
+        <div className="w-8 h-8 rounded-full border-2 border-indigo-600 border-t-transparent animate-spin" />
+      </div>
+    )
   }
 
   return (
@@ -34,13 +40,13 @@ export default async function DashboardPage() {
       
       <main className="container mx-auto max-w-5xl px-4 py-12">
         <div className="mb-8">
-          <h1 className="text-3xl font-semibold tracking-tight">Welcome back{user.user_metadata.full_name ? `, ${user.user_metadata.full_name.split(' ')[0]}` : ''}</h1>
+          <h1 className="text-3xl font-semibold tracking-tight">Welcome back{user.user_metadata?.full_name ? `, ${user.user_metadata.full_name.split(' ')[0]}` : ''}</h1>
           <p className="text-zinc-500 mt-2">Manage your account and view your data below.</p>
         </div>
 
         <div className="rounded-xl border border-zinc-200 bg-white shadow-sm overflow-hidden">
           <div className="p-6 border-b border-zinc-100 flex items-center gap-4">
-            {user.user_metadata.avatar_url && (
+            {user.user_metadata?.avatar_url && (
               <Image 
                 src={user.user_metadata.avatar_url} 
                 alt="Profile photo" 
@@ -63,7 +69,7 @@ export default async function DashboardPage() {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-y-1 py-3 border-b border-zinc-200 last:border-0 last:pb-0">
                 <div className="text-sm text-zinc-500 font-medium">Full Name</div>
-                <div className="md:col-span-3 text-sm text-zinc-900">{user.user_metadata.full_name || 'N/A'}</div>
+                <div className="md:col-span-3 text-sm text-zinc-900">{user.user_metadata?.full_name || 'N/A'}</div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-y-1 py-3 border-b border-zinc-200 last:border-0 last:pb-0">
                 <div className="text-sm text-zinc-500 font-medium">User ID</div>
