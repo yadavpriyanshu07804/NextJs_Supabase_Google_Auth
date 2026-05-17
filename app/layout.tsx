@@ -1,33 +1,19 @@
 import type { Metadata } from 'next';
-import { Inter, Noto_Sans_Devanagari } from 'next/font/google';
+import { Inter } from 'next/font/google';
 import './globals.css';
-import { Toaster } from 'sonner';
-import { AuthProvider } from '@/context/AuthContext';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
-const notoDevanagari = Noto_Sans_Devanagari({ 
-  subsets: ['devanagari', 'latin'], 
-  variable: '--font-hindi',
-  weight: ['400', '500', '700']
-});
 
 export const metadata: Metadata = {
-  title: 'QuickPPT AI | PDF to PowerPoint Question Generator',
-  description: 'Transform PDF question papers into beautifully formatted PowerPoint presentations in seconds with AI.',
+  title: 'Supabase Starter',
+  description: 'Next.js App with Supabase Auth',
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${notoDevanagari.variable} dark`}>
-      <body suppressHydrationWarning className="font-sans min-h-screen bg-background text-foreground antialiased">
-        <AuthProvider>
-          {children}
-        </AuthProvider>
-        <Toaster position="top-center" theme="dark" richColors />
+    <html lang="en" className={inter.variable}>
+      <body className="font-sans antialiased text-zinc-900 bg-zinc-50 min-h-screen">
+        {children}
       </body>
     </html>
   );
