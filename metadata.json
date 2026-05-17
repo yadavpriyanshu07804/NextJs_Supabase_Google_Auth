@@ -1,0 +1,8 @@
+{
+  "name": "Supabase Starter",
+  "description": "A clean Next.js app with Supabase Google Authentication.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
