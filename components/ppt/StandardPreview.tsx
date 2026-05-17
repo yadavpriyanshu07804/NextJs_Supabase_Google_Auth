@@ -1,0 +1,52 @@
+'use client'
+
+import React from 'react';
+import { SLIDE_THEME, PRES_LAYOUT } from '@/lib/presentation-constants';
+import { RenderedSlide } from '@/lib/slide-utils';
+import { calculateStandardLayout } from '@/lib/ppt/layout-engine';
+
+interface Props {
+  slide: RenderedSlide;
+  themeColor: string;
+}
+
+export function StandardPreview({ slide, themeColor }: Props) {
+  const { questionSlide: qTheme } = SLIDE_THEME;
+  const layout = qTheme.layouts.standard;
+
+  const english = slide.english || slide.content;
+  const hindi = slide.hindi || "";
+  
+  const { baseFontSize, hindiFontSize, optionsFontSize } = calculateStandardLayout(english, hindi, layout.body.w);
+  
+  const toVw = (pt: number) => `${(pt / (PRES_LAYOUT.width * 72)) * 100}cqw`;
+
+  return (
+    <div className="w-full h-full relative bg-white p-[4%] flex flex-col" style={{ fontFamily: 'var(--font-hindi), sans-serif' }}>
+      {/* Content Block (English + Hindi) */}
+      <div className="flex flex-col h-[75%] overflow-hidden">
+        <div className="text-[#1f2937] leading-[1.3] mb-[1%]" style={{ fontSize: toVw(baseFontSize) }}>
+          {slide.qNum && !slide.isContinuation && <span className="font-bold text-[#111827] mr-1.5">{slide.qNum}.</span>}
+          {english}
+        </div>
+
+        {hindi && (
+          <div className="text-[#374151] leading-[1.4] mt-[1%]" style={{ fontSize: toVw(hindiFontSize) }}>
+            {hindi}
+          </div>
+        )}
+      </div>
+
+      {/* Options Grid */}
+      {slide.optionList && slide.optionList.length >= 4 && (
+        <div className="mt-auto h-[20%] grid grid-cols-2 gap-x-[2%] gap-y-[4%] text-[#4b5563]" style={{ fontSize: toVw(optionsFontSize) }}>
+          {slide.optionList.map((opt, idx) => (
+            <div key={idx} className="bg-zinc-50/80 px-2 py-1.5 rounded-sm border border-zinc-100 flex items-center truncate">
+              {opt}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}

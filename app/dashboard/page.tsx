@@ -1,88 +1,60 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
-import { LogoutButton } from '@/components/logout-button'
-import Image from 'next/image'
-import { useAuth } from '@/context/AuthContext'
-import { useEffect } from 'react'
+import { Navbar } from "@/components/Navbar";
+import { Container } from "@/components/Container";
+import { UploadDashboard } from "@/components/UploadDashboard";
+import { PresentationHistory } from "@/components/PresentationHistory";
+import { useAuth } from '@/context/AuthContext';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function DashboardPage() {
-  const { user, loading } = useAuth()
-  const router = useRouter()
+  const { user, loading } = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
     if (!loading && !user) {
-      router.push('/')
+      router.push('/');
     }
-  }, [loading, user, router])
+  }, [loading, user, router]);
 
   if (loading || !user) {
     return (
-      <div className="min-h-screen bg-zinc-50 flex items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center bg-[#050505]">
         <div className="w-8 h-8 rounded-full border-2 border-indigo-600 border-t-transparent animate-spin" />
       </div>
-    )
+    );
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50 text-zinc-900">
-      <header className="border-b bg-white border-zinc-200">
-        <div className="container mx-auto max-w-5xl px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-md bg-zinc-900 flex items-center justify-center">
-              <span className="text-white font-semibold text-sm">JS</span>
+    <div className="flex min-h-screen flex-col bg-[#050505]">
+      <Navbar />
+      <main className="flex-1">
+        <section className="py-8 md:py-12 lg:py-16 border-b border-white/5 bg-zinc-950/30">
+          <Container>
+            <div className="w-full">
+              <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent">
+                Create Presentation
+              </h1>
+              <p className="mt-4 text-base md:text-lg text-zinc-400 font-medium leading-relaxed max-w-3xl">
+                Our ultra-fast AI engine handles extraction and formatting in real-time. Simply drop your file below.
+              </p>
             </div>
-            <h2 className="text-base font-semibold tracking-tight">Dashboard</h2>
-          </div>
-          <LogoutButton />
-        </div>
-      </header>
-      
-      <main className="container mx-auto max-w-5xl px-4 py-12">
-        <div className="mb-8">
-          <h1 className="text-3xl font-semibold tracking-tight">Welcome back{user.user_metadata?.full_name ? `, ${user.user_metadata.full_name.split(' ')[0]}` : ''}</h1>
-          <p className="text-zinc-500 mt-2">Manage your account and view your data below.</p>
-        </div>
-
-        <div className="rounded-xl border border-zinc-200 bg-white shadow-sm overflow-hidden">
-          <div className="p-6 border-b border-zinc-100 flex items-center gap-4">
-            {user.user_metadata?.avatar_url && (
-              <Image 
-                src={user.user_metadata.avatar_url} 
-                alt="Profile photo" 
-                width={48} 
-                height={48} 
-                className="rounded-full shadow-sm ring-1 ring-zinc-200" 
-                referrerPolicy="no-referrer"
-              />
-            )}
-            <div>
-              <h3 className="font-medium text-zinc-900">Profile Details</h3>
-              <p className="text-sm text-zinc-500">Information provided by Google</p>
-            </div>
-          </div>
-          <div className="p-6 bg-zinc-50/50">
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-y-1 py-3 border-b border-zinc-200 last:border-0 last:pb-0">
-                <div className="text-sm text-zinc-500 font-medium">Email</div>
-                <div className="md:col-span-3 text-sm text-zinc-900 font-medium">{user.email}</div>
+          </Container>
+        </section>
+        <section className="py-8 md:py-12 lg:py-16">
+          <Container>
+            <div className="grid gap-8 lg:gap-12 lg:grid-cols-[1.2fr_1fr] xl:grid-cols-[1.4fr_1fr] 2xl:grid-cols-[1.6fr_1fr]">
+              <div className="min-w-0">
+                <UploadDashboard />
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-y-1 py-3 border-b border-zinc-200 last:border-0 last:pb-0">
-                <div className="text-sm text-zinc-500 font-medium">Full Name</div>
-                <div className="md:col-span-3 text-sm text-zinc-900">{user.user_metadata?.full_name || 'N/A'}</div>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-y-1 py-3 border-b border-zinc-200 last:border-0 last:pb-0">
-                <div className="text-sm text-zinc-500 font-medium">User ID</div>
-                <div className="md:col-span-3 text-sm text-zinc-900 font-mono text-xs">{user.id}</div>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-y-1 py-3 border-b border-zinc-200 last:border-0 last:pb-0">
-                <div className="text-sm text-zinc-500 font-medium">Last Sign In</div>
-                <div className="md:col-span-3 text-sm text-zinc-900">{new Date(user.last_sign_in_at || '').toLocaleString()}</div>
+              <div className="lg:border-l lg:border-white/5 lg:pl-10 min-w-0">
+                <PresentationHistory />
               </div>
             </div>
-          </div>
-        </div>
+          </Container>
+        </section>
       </main>
     </div>
-  )
+  );
 }
